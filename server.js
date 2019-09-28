@@ -23,6 +23,13 @@ app.get('/', (req, res) => {
     });
 });
 
+app.get('/login', (req, res) => {
+    res.render('login',{
+        title: '과제',
+        subject: '로그인'
+    });
+});
+
 app.post('/login', (req, res) => {
     // 아래 로직을 구현하라.
     // 1. 클라이언트에서 전달한 email을 이용하여 userDB에서 찾는다.
@@ -30,12 +37,43 @@ app.post('/login', (req, res) => {
     // 3. 있고 비밀번호가 맞으면 'xxx님 안녕하세요 출력'
     // 4. 비밀번호가 틀리면 '비밀번호가 틀립니다.' 출력
 
+    const email = req.body.email;
+    const password = req.body.password;
+    let responseText;;
+
+    userDB.find(function(value,index,array){
+        if( value.email !== email ){
+            responseText = '회원이 아닙니다.';            
+        }else{
+            if( value.password !== password ){
+                responseText = '비밀번호가 틀립니다.';                
+            }else{
+                responseText = value.name + '님 안녕하세요.';                
+            }
+        }
+    });
+    
+   res.send(responseText);
+
     console.log(req.body);
+});
+
+app.get('/register', (req, res) => {
+    res.render('register',{
+        title: '과제',
+        subject: '회원가입'
+    });
 });
 
 app.post('/register', (req, res) => {
     // 아래 로직을 구현하라.
     // 1. userDB에 회원정보를 저장한다.
+
+    userDB.push({
+        email: req.body.email,
+        password: req.body.password,
+        name: req.body.name
+    });
 
     res.redirect('/login');
 });
